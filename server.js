@@ -90,3 +90,25 @@ app.post( '/petStuff', function( req, res ) {
     } // end no error
   }); // end pool connect
 }); // end /images post
+
+app.post('/details', function(req, res) {
+  console.log('details url hit');
+  pool.connect( function( err, connection, done ) {
+    if( err ) {
+      console.log( err );
+      done();
+      res.send( 400 );
+    } else {
+      console.log( 'connected to details DB' );
+      var petThang = [];
+      var resultSet = connection.query( 'SELECT ( owner_fullname, pet_name, pet_breed, pet_color) from petTable WHERE owner_first is null' );
+      resultSet.on('row', function(row) {
+        petThang.push(row);
+      }); //end
+      resultSet.on('end', function() {
+        done();
+        res.send(petThang);
+      });
+    } // end no error
+  }); // end pool connect
+});

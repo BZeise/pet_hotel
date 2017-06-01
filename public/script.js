@@ -10,6 +10,7 @@ function updateDropdown() {
     url: '/dropdown',
     type: 'GET',
     success: function(response){
+      $('#ownerName').children().remove();
       console.log( 'got some DUROPODOWNOOOO: ', response);
       for (var i = 0; i < response.length; i++) {
         var ownFirst = response[i].owner_first;
@@ -50,11 +51,23 @@ function petDetails() {
     color: $('#color').val()
   };
   $.ajax({
-    url: '/petStuff',
+    url: '/details',
     type: 'POST',
     data: petInfo,
     success: function( data ){
       console.log( 'got some pets: ', data );
+      //$('#pt').children().remove();
+      for (var i = 0; i < data.length; i++) {
+        var petsToPost = '<tr> <td>' + data[i].owner_fullname + '</td>';
+        petsToPost += '<td>' + data[i].pet_name + '</td>';
+        petsToPost += '<td>' + data[i].pet_breed + '</td>';
+        petsToPost += '<td>' + data[i].pet_color + '</td></tr>';
+        $('#pt').append(petsToPost);
+      }
     } // end success
   }); //end ajax
 };
+
+// current issues:
+// "add pet" button and function removes entire pet info div
+// "got some pets" returns empty object, problem maybe in SQL query?
