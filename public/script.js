@@ -5,6 +5,9 @@ $(document).ready(function() {
   updateDropdown();
 });
 
+var petInfo = {};
+var fullName = '';
+
 function updateDropdown() {
   $.ajax({
     url: '/dropdown',
@@ -16,10 +19,11 @@ function updateDropdown() {
         var ownFirst = response[i].owner_first;
         var ownLast = response[i].owner_last;
         var underscoreName = ownFirst + ownLast;
-        var fullName = ownFirst + ' ' + ownLast;
+        fullName = ownFirst + ' ' + ownLast;
         console.log('full names are: ' + underscoreName + ', ' + fullName);
         var toAppend = "<option>" + fullName + "</option>";
         $('#ownerName').append(toAppend);
+        petInfo.owner_fullname = fullName;
       } // end for loop
     } // end success
   }); //end ajax
@@ -42,14 +46,27 @@ function registerOwner() {
   }); //end ajax
 };
 
+function addPetDB() {
+  $.ajax({
+    url: '/petStuff',
+    type: 'POST',
+    data: petInfo,
+    success: function( data ) {
+      console.log( 'succeded at addPetDB: ', data );
+    } // end success
+  }); //end ajax
+}
+
 function petDetails() {
   console.log( 'in petInfo on click' );
   console.log($('#ownerName').val());
-  var petInfo = {
+  petInfo = {
     petName: $('#petName').val(),
     breed: $('#breed').val(),
     color: $('#color').val()
   };
+  console.log(petInfo);
+  addPetDB();
   $.ajax({
     url: '/details',
     type: 'POST',
@@ -58,11 +75,12 @@ function petDetails() {
       console.log( 'got some pets: ', data );
       //$('#pt').children().remove();
       for (var i = 0; i < data.length; i++) {
-        var petsToPost = '<tr> <td>' + data[i].owner_fullname + '</td>';
+        var petsToPost = '<tr><td>' + data[i].owner_fullname + '</td>';
         petsToPost += '<td>' + data[i].pet_name + '</td>';
         petsToPost += '<td>' + data[i].pet_breed + '</td>';
         petsToPost += '<td>' + data[i].pet_color + '</td></tr>';
         $('#pt').append(petsToPost);
+        console.log(petsToPost);
       }
     } // end success
   }); //end ajax

@@ -107,6 +107,7 @@ app.post('/details', function(req, res) {
       }); //end
       resultSet.on('end', function() {
         done();
+        console.log(petThang);
         res.send(petThang);
       });
     } // end no error
